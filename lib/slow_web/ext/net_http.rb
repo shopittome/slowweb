@@ -6,18 +6,19 @@ module Net
     def request_with_slowweb(request, body = nil, &block)
       host = self.address
       limit = SlowWeb.get_limit(host)
-      
+
       # Manage this request if it has been limited
       if !limit.nil?
         # Wait until the request limit is no longer exceeded
         while limit.exceeded?
+          puts "SlowWeb limit exceeded: SLEEPING 1"
           sleep 1
         end
-      
+
         # Add request to limiter
         limit.add_request(request)
       end
-      
+
       # Continue with the original request
       request_without_slowweb(request, body, &block)
     end
